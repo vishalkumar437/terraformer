@@ -152,16 +152,16 @@ func (s *Service) PostConvertHook() error {
 }
 
 func (s *Service) PopulateIgnoreKeys(providerWrapper *providerwrapper.ProviderWrapper) {
-	var resourcesTypes []string
-	for _, r := range s.Resources {
-		resourcesTypes = append(resourcesTypes, r.InstanceInfo.Type)
-	}
-	keys := IgnoreKeys(resourcesTypes, providerWrapper)
-	for k, v := range keys {
-		for i := range s.Resources {
-			if s.Resources[i].InstanceInfo.Type == k {
-				s.Resources[i].IgnoreKeys = append(s.Resources[i].IgnoreKeys, v...)
-			}
-		}
-	}
+	// var resourcesTypes []string
+	// for _, r := range s.Resources {
+	// 	resourcesTypes = append(resourcesTypes, r.InstanceInfo.Type)
+	// }
+	// keys := IgnoreKeys(resourcesTypes, providerWrapper)
+	// for k, v := range keys {
+	// 	for i := range s.Resources {
+	// 		if s.Resources[i].InstanceInfo.Type == k {
+	// 			s.Resources[i].IgnoreKeys = append(s.Resources[i].IgnoreKeys, v...)
+	// 		}
+	// 	}
+	// }
 }

@@ -49,27 +49,27 @@ func (g *ElastiCacheGenerator) loadCacheClusters(svc *elasticache.Client) error 
 			// terraform-aws provider has ConflictsWith on ReplicationGroupId with all next attributes,
 			// but return all attributes on refresh :(
 			// https://github.com/terraform-providers/terraform-provider-aws/blob/master/aws/resource_aws_elasticache_cluster.go#L167
-			if StringValue(cluster.ReplicationGroupId) != "" {
-				resource.IgnoreKeys = append(resource.IgnoreKeys,
-					"^availability_zones$",
-					"^az_mode$",
-					"^engine_version$",
-					"^engine$",
-					"^maintenance_window$",
-					"^node_type$",
-					"^notification_topic_arn$",
-					"^num_cache_nodes$",
-					"^parameter_group_name$",
-					"^port$",
-					"^security_group_ids.(.*)",
-					"^security_group_names$",
-					"^snapshot_arns$",
-					"^snapshot_name$",
-					"^snapshot_retention_limit$",
-					"^snapshot_window$",
-					"^subnet_group_name$",
-				)
-			}
+			// if StringValue(cluster.ReplicationGroupId) != "" {
+			// 	resource.IgnoreKeys = append(resource.IgnoreKeys,
+			// 		"^availability_zones$",
+			// 		"^az_mode$",
+			// 		"^engine_version$",
+			// 		"^engine$",
+			// 		"^maintenance_window$",
+			// 		"^node_type$",
+			// 		"^notification_topic_arn$",
+			// 		"^num_cache_nodes$",
+			// 		"^parameter_group_name$",
+			// 		"^port$",
+			// 		"^security_group_ids.(.*)",
+			// 		"^security_group_names$",
+			// 		"^snapshot_arns$",
+			// 		"^snapshot_name$",
+			// 		"^snapshot_retention_limit$",
+			// 		"^snapshot_window$",
+			// 		"^subnet_group_name$",
+			// 	)
+			// }
 			g.Resources = append(g.Resources, resource)
 		}
 	}

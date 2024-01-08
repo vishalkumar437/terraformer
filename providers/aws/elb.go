@@ -52,7 +52,7 @@ func (g *ElbGenerator) InitResources() error {
 				"aws",
 				ElbAllowEmptyValues,
 			)
-			resource.IgnoreKeys = append(resource.IgnoreKeys, "^instances\\.(.*)") // don't import current connect instances to ELB
+			// resource.IgnoreKeys = append(resource.IgnoreKeys, "^instances\\.(.*)") // don't import current connect instances to ELB
 			g.Resources = append(g.Resources, resource)
 		}
 	}

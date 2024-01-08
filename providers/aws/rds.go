@@ -108,7 +108,7 @@ func (g *RDSGenerator) loadDBInstances(svc *rds.Client) error {
 				"aws",
 				RDSAllowEmptyValues,
 			)
-			r.IgnoreKeys = append(r.IgnoreKeys, "^name$")
+			// r.IgnoreKeys = append(r.IgnoreKeys, "^name$")
 			g.Resources = append(g.Resources, r)
 		}
 	}

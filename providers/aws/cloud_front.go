@@ -64,7 +64,7 @@ func (g *CloudFrontGenerator) loadDistribution(svc *cloudfront.Client) error {
 				cloudFrontAllowEmptyValues,
 				map[string]interface{}{},
 			)
-			r.IgnoreKeys = append(r.IgnoreKeys, "^active_trusted_signers.(.*)")
+			// r.IgnoreKeys = append(r.IgnoreKeys, "^active_trusted_signers.(.*)")
 			g.Resources = append(g.Resources, r)
 
 		}
