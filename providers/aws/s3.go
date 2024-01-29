@@ -53,6 +53,125 @@ func (g *S3Generator) createResources(config aws.Config, buckets *s3.ListBuckets
 				"force_destroy": "false",
 				"acl":           "private",
 			}
+			// Check if public access block exists for the bucket
+			publicAccessBlock, err := svc.GetPublicAccessBlock(context.TODO(), &s3.GetPublicAccessBlockInput{
+				Bucket: bucket.Name,
+			})
+			if err == nil && (publicAccessBlock.PublicAccessBlockConfiguration != nil) {
+				// If public access block exists, generate Terraform resource
+				attributes["public_access_block"] = "true"
+				resources = append(resources, terraformutils.NewResource(
+					resourceName,
+					resourceName,
+					"aws_s3_bucket_public_access_block",
+					"aws",
+					nil,
+					S3AllowEmptyValues,
+					S3AdditionalFields))
+			}
+
+			// Check if bucket ACL exists
+			bucketAcl, err := svc.GetBucketAcl(context.TODO(), &s3.GetBucketAclInput{
+				Bucket: bucket.Name,
+			})
+			if err == nil && bucketAcl.Owner != nil {
+				// If ACL exists, generate Terraform resource(requires clarification currently using DisplayName as ACL)
+				attributes["acl"] = *bucketAcl.Owner.DisplayName
+				resources = append(resources, terraformutils.NewResource(
+					resourceName,
+					resourceName,
+					"aws_s3_bucket_acl",
+					"aws",
+					attributes,
+					S3AllowEmptyValues,
+					S3AdditionalFields))
+			}
+
+			// Check if bucket ownership controls exist
+			ownershipControls, err := svc.GetBucketOwnershipControls(context.TODO(), &s3.GetBucketOwnershipControlsInput{
+				Bucket: bucket.Name,
+			})
+			if err == nil && ownershipControls.OwnershipControls != nil && len(ownershipControls.OwnershipControls.Rules) > 0 {
+				// If ownership controls exist, generate Terraform resource for ownership controls
+				attributes["ownership_controls"] = "true"
+				resources = append(resources, terraformutils.NewResource(
+					resourceName,
+					resourceName,
+					"aws_s3_bucket_ownership_controls",
+					"aws",
+					nil,
+					S3AllowEmptyValues,
+					S3AdditionalFields))
+			}
+
+			// Check if server-side encryption configuration exists
+			encryptionConfig, err := svc.GetBucketEncryption(context.TODO(), &s3.GetBucketEncryptionInput{
+				Bucket: bucket.Name,
+			})
+			if err == nil && encryptionConfig.ServerSideEncryptionConfiguration != nil && len(encryptionConfig.ServerSideEncryptionConfiguration.Rules) > 0 {
+				// If encryption configuration exists, generate Terraform resource for encryption configuration
+				attributes["server_side_encryption_configuration"] = "true"
+				resources = append(resources, terraformutils.NewResource(
+					resourceName,
+					resourceName,
+					"aws_s3_bucket_server_side_encryption_configuration",
+					"aws",
+					nil,
+					S3AllowEmptyValues,
+					S3AdditionalFields))
+			}
+
+			// Check if versioning configuration exists
+			versioningConfig, err := svc.GetBucketVersioning(context.TODO(), &s3.GetBucketVersioningInput{
+				Bucket: bucket.Name,
+			})
+			if err == nil && versioningConfig.Status != "" {
+				// If versioning configuration exists, generate Terraform resource for versioning
+				attributes["versioning"] = "true"
+				resources = append(resources, terraformutils.NewResource(
+					resourceName,
+					resourceName,
+					"aws_s3_bucket_versioning",
+					"aws",
+					nil,
+					S3AllowEmptyValues,
+					S3AdditionalFields))
+			}
+
+			// Check if replication configuration exists
+			replicationConfig, err := svc.GetBucketReplication(context.TODO(), &s3.GetBucketReplicationInput{
+				Bucket: bucket.Name,
+			})
+			if err == nil && replicationConfig.ReplicationConfiguration != nil {
+				// If replication configuration exists, generate Terraform resource for replication configuration
+				attributes["replication_configuration"] = "true"
+				resources = append(resources, terraformutils.NewResource(
+					resourceName,
+					resourceName,
+					"aws_s3_bucket_replication_configuration",
+					"aws",
+					nil,
+					S3AllowEmptyValues,
+					S3AdditionalFields))
+			}
+
+			// Check if lifecycle configuration exists
+			lifecycleConfig, err := svc.GetBucketLifecycleConfiguration(context.TODO(), &s3.GetBucketLifecycleConfigurationInput{
+				Bucket: bucket.Name,
+			})
+			if err == nil && lifecycleConfig.Rules != nil && len(lifecycleConfig.Rules) > 0 {
+				// If lifecycle configuration exists, generate Terraform resource for lifecycle configuration
+				attributes["lifecycle_configuration"] = "true"
+				resources = append(resources, terraformutils.NewResource(
+					resourceName,
+					resourceName,
+					"aws_s3_bucket_lifecycle_configuration",
+					"aws",
+					nil,
+					S3AllowEmptyValues,
+					S3AdditionalFields))
+			}
+
 			// try get policy
 			var policy *s3.GetBucketPolicyOutput
 			policy, err = svc.GetBucketPolicy(context.TODO(), &s3.GetBucketPolicyInput{

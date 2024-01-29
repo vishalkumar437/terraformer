@@ -46,6 +46,28 @@ func (g *Ec2Generator) InitResources() error {
 			})
 		}
 	}
+
+	// Fetch key pairs
+	keyPairs, err := svc.DescribeKeyPairs(context.TODO(), &ec2.DescribeKeyPairsInput{})
+	if err != nil {
+		return err
+	}
+
+	// Create resources for key pairs
+	for _, keyPair := range keyPairs.KeyPairs {
+		g.Resources = append(g.Resources, terraformutils.NewResource(
+			*keyPair.KeyName,
+			*keyPair.KeyName,
+			"aws_key_pair",
+			"aws",
+			map[string]string{
+				"key_name": *keyPair.KeyName,
+			},
+			ec2AllowEmptyValues,
+			map[string]interface{}{},
+		))
+	}
+
 	p := ec2.NewDescribeInstancesPaginator(svc, &ec2.DescribeInstancesInput{
 		Filters: filters,
 	})
@@ -70,6 +92,10 @@ func (g *Ec2Generator) InitResources() error {
 				if err == nil && attr.UserData != nil && attr.UserData.Value != nil {
 					userDataBase64 = *attr.UserData.Value
 				}
+				keyPairName := ""
+				if instance.KeyName != nil {
+					keyPairName = *instance.KeyName
+				}
 				r := terraformutils.NewResource(
 					*instance.InstanceId,
 					*instance.InstanceId+"_"+name,
@@ -78,6 +104,7 @@ func (g *Ec2Generator) InitResources() error {
 					map[string]string{
 						"user_data_base64":  userDataBase64,
 						"source_dest_check": "true",
+						"key_name":          keyPairName,
 					},
 					ec2AllowEmptyValues,
 					map[string]interface{}{},
