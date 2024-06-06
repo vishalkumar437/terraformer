@@ -41,7 +41,7 @@ func providerImporterSubcommands() []func(options ImportOptions) *cobra.Command 
 		// Major Cloud
 		// newCmdGoogleImporter,
 		newCmdAwsImporter,
-		// newCmdAzureImporter,
+		newCmdAzureImporter,
 		// newCmdAliCloudImporter,
 		// newCmdIbmImporter,
 		// // Cloud
@@ -66,8 +66,8 @@ func providerImporterSubcommands() []func(options ImportOptions) *cobra.Command 
 		// newCmdNs1Importer,
 		// newCmdPanosImporter,
 		// // VCS
-		// newCmdAzureDevOpsImporter,
-		// newCmdAzureADImporter,
+		newCmdAzureDevOpsImporter,
+		newCmdAzureADImporter,
 		// newCmdGithubImporter,
 		// newCmdGitLabImporter,
 		// Monitoring & System Management
@@ -98,7 +98,7 @@ func providerGenerators() map[string]func() terraformutils.ProviderGenerator {
 		// Major Cloud
 		// newGoogleProvider,
 		newAWSProvider,
-		// newAzureProvider,
+		newAzureProvider,
 		// newAliCloudProvider,
 		// newIbmProvider,
 		// // Cloud
@@ -120,8 +120,8 @@ func providerGenerators() map[string]func() terraformutils.ProviderGenerator {
 		// newMyrasecProvider,
 		// newCloudflareProvider,
 		// // VCS
-		// newAzureDevOpsProvider,
-		// newAzureADProvider,
+		newAzureDevOpsProvider,
+		newAzureADProvider,
 		// newGitHubProvider,
 		// newGitLabProvider,
 		// // Monitoring & System Management
